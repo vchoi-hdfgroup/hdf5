@@ -25,6 +25,7 @@
 ./.h5chkright.ini      _DO_NOT_DISTRIBUTE_
 ./ACKNOWLEDGMENTS
 ./COPYING
+./COPYING_AKADIO
 ./COPYING_LBNL_HDF5
 ./MANIFEST
 ./Makefile.dist
@@ -3048,6 +3049,11 @@
 ./utils/mirror_vfd/mirror_server_stop.c
 ./utils/mirror_vfd/mirror_writer.c
 
+# VFD SWMR utilities
+./utils/vfd_swmr/README.md
+./utils/vfd_swmr/Makefile.am
+./utils/vfd_swmr/aux_process.c
+
 # high level libraries
 ./hl/Makefile.am
 ./hl/examples/Makefile.am
@@ -3792,6 +3798,7 @@
 ./tools/test/perform/CMakeTests.cmake
 ./utils/CMakeLists.txt
 ./utils/mirror_vfd/CMakeLists.txt
+./utils/vfd_swmr/CMakeLists.txt
 
 # CMake-specific User Scripts
 ./config/cmake/CTestScript.cmake
@@ -3906,3 +3913,4 @@
 ./tools/test/perform/Makefile.in
 ./utils/Makefile.in
 ./utils/mirror_vfd/Makefile.in
+./utils/vfd_swmr/Makefile.in

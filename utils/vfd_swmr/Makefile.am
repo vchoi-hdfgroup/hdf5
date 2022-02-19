@@ -1,5 +1,5 @@
 #
-# Copyright by The HDF Group.
+# Copyright by Akadio, Inc.
 # All rights reserved.
 #
 # This file is part of HDF5.  The full HDF5 copyright notice, including
@@ -11,16 +11,19 @@
 ##
 ## Makefile.am
 ## Run automake to generate a Makefile.in from this file.
-##
 #
-# Utils HDF5 Makefile(.in)
+# HDF5 Library Makefile(.in)
 #
 
 include $(top_srcdir)/config/commence.am
 
-CONFIG=ordered
+AM_CPPFLAGS+=-I$(top_srcdir)/src
 
-# All subdirectories
-SUBDIRS=mirror_vfd vfd_swmr
+bin_PROGRAMS = aux_process
+
+aux_process_SOURCES = aux_process.c
+
+# All programs depend on the hdf5 library
+# LDADD=$(LIBHDF5)
 
 include $(top_srcdir)/config/conclude.am
