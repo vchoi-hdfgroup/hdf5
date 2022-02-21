@@ -16,7 +16,7 @@
  *
  * Tests the VFD SWMR Feature.
  *
- * Note: Relevant tests in this file are modified to reflect the 
+ * Note: Relevant tests in this file are modified to reflect the
  *       changes to the fapl for VDS.  See latest RFC.
  *
  *************************************************************/
@@ -183,7 +183,7 @@ test_fapl(void)
 
     /* Set valid md_pages_reserved */
     my_config->md_pages_reserved = 2;
-    my_config->writer = TRUE;
+    my_config->writer            = TRUE;
 
     /* Should fail: at least one of maintain_metadata_file and generate_updater_files must be true */
     H5E_BEGIN_TRY
@@ -1428,7 +1428,8 @@ test_reader_md_concur(void)
         /* config, tick_len, max_lag, presume_posix_semantics, writer,
          * maintain_metadata_file, generate_updater_files, flush_raw_data, md_pages_reserved,
          * md_file_path, md_file_name, updater_file_path */
-        init_vfd_swmr_config(config_reader, 1, 3, FALSE, FALSE, TRUE, FALSE, TRUE, 256, NULL, MD_FILENAME, NULL);
+        init_vfd_swmr_config(config_reader, 1, 3, FALSE, FALSE, TRUE, FALSE, TRUE, 256, NULL, MD_FILENAME,
+                             NULL);
 
         /* use_latest_format, use_vfd_swmr, only_meta_page, page_buf_size, config */
         fapl_reader = vfd_swmr_create_fapl(FALSE, TRUE, FALSE, FS_PAGE_SIZE, config_reader);
@@ -2044,7 +2045,8 @@ test_multiple_file_opens_concur(void)
         /* config, tick_len, max_lag, presume_posix_semantics, writer,
          * maintain_metadata_file, generate_updater_files, flush_raw_data, md_pages_reserved,
          * md_file_path, md_file_name, updater_file_path */
-        init_vfd_swmr_config(config_writer, 1, 3, FALSE, TRUE, TRUE, FALSE, TRUE, 256, NULL, MD_FILENAME2, NULL);
+        init_vfd_swmr_config(config_writer, 1, 3, FALSE, TRUE, TRUE, FALSE, TRUE, 256, NULL, MD_FILENAME2,
+                             NULL);
 
         /* use_latest_format, use_vfd_swmr, only_meta_page, page_buf_size, config */
         fapl_writer = vfd_swmr_create_fapl(FALSE, TRUE, FALSE, FS_PAGE_SIZE, config_writer);
@@ -2382,7 +2384,8 @@ test_disable_enable_eot_concur(void)
         /* config, tick_len, max_lag, presume_posix_semantics, writer,
          * maintain_metadata_file, generate_updater_files, flush_raw_data, md_pages_reserved,
          * md_file_path, md_file_name, updater_file_path */
-        init_vfd_swmr_config(config_reader, 1, 3, FALSE, FALSE, TRUE, FALSE, TRUE, 256, NULL, MD_FILENAME, NULL);
+        init_vfd_swmr_config(config_reader, 1, 3, FALSE, FALSE, TRUE, FALSE, TRUE, 256, NULL, MD_FILENAME,
+                             NULL);
 
         /* use_latest_format, use_vfd_swmr, only_meta_page, page_buf_size, config */
         fapl_reader = vfd_swmr_create_fapl(FALSE, TRUE, FALSE, FS_PAGE_SIZE, config_reader);
@@ -2672,7 +2675,8 @@ test_file_end_tick_concur(void)
         /* config, tick_len, max_lag, presume_posix_semantics, writer,
          * maintain_metadata_file, generate_updater_files, flush_raw_data, md_pages_reserved,
          * md_file_path, md_file_name, updater_file_path */
-        init_vfd_swmr_config(config_reader, 1, 3, FALSE, FALSE, TRUE, FALSE, TRUE, 256, NULL, MD_FILENAME, NULL);
+        init_vfd_swmr_config(config_reader, 1, 3, FALSE, FALSE, TRUE, FALSE, TRUE, 256, NULL, MD_FILENAME,
+                             NULL);
 
         /* use_latest_format, use_vfd_swmr, only_meta_page, page_buf_size, config */
         fapl_reader = vfd_swmr_create_fapl(FALSE, TRUE, FALSE, FS_PAGE_SIZE, config_reader);
@@ -4327,8 +4331,8 @@ test_updater_generate_md_checksums(hbool_t file_create)
     hid_t                   fapl = -1; /* File access property list ID */
     H5F_vfd_swmr_config_t   config;    /* Configuration for VFD SWMR */
     H5F_generate_md_ck_cb_t cb_info;   /* Callback */
-    H5F_t * f        = NULL;        /* Internal file object pointer */
-    char *md_file_path_name;
+    H5F_t *                 f = NULL;  /* Internal file object pointer */
+    char *                  md_file_path_name;
 
     if (file_create) {
         TESTING("VFD SWMR updater generate checksums for metadata file with H5Fcreate");
@@ -4381,7 +4385,6 @@ test_updater_generate_md_checksums(hbool_t file_create)
 
     /* Get the full metadata file pathname */
     md_file_path_name = HDstrdup(f->shared->md_file_path_name);
-
 
     /* Close the file  */
     if (H5Fclose(fid) < 0)

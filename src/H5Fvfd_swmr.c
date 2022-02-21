@@ -204,8 +204,8 @@ H5F_vfd_swmr_init(H5F_t *f, hbool_t file_create)
         /* Retrieve the metadata filename built with md_file_path and md_file_name */
         H5FD_vfd_swmr_get_md_path_name(f->shared->lf, &shared->md_file_path_name);
 
-        if (((shared->vfd_swmr_md_fd = HDopen(shared->md_file_path_name,
-                                              O_CREAT | O_RDWR | O_TRUNC, H5_POSIX_CREATE_MODE_RW))) < 0)
+        if (((shared->vfd_swmr_md_fd = HDopen(shared->md_file_path_name, O_CREAT | O_RDWR | O_TRUNC,
+                                              H5_POSIX_CREATE_MODE_RW))) < 0)
             HGOTO_ERROR(H5E_FILE, H5E_CANTOPENFILE, FAIL, "unable to create the metadata file")
 
         md_size = (hsize_t)shared->vfd_swmr_config.md_pages_reserved * shared->fs_page_size;
@@ -373,7 +373,7 @@ H5F_vfd_swmr_close_or_flush(H5F_t *f, hbool_t closing)
         if (HDunlink(shared->md_file_path_name) < 0)
             HSYS_GOTO_ERROR(H5E_FILE, H5E_CANTREMOVE, FAIL, "unable to unlink the metadata file");
 
-        shared->md_file_path_name   = (char *)H5MM_xfree(shared->md_file_path_name);
+        shared->md_file_path_name = (char *)H5MM_xfree(shared->md_file_path_name);
 
         /* Close the free-space manager for the metadata file */
         if (H5MV_close(f) < 0)
@@ -1125,7 +1125,7 @@ done:
  *
  * Programmer: John Mainzer 12/29/18
  *
- * Changes:  
+ * Changes:
  *  VDS changes: Check make_believe whether to continue the same or
  *               get out of make_believe and load header/index.
  *               For details, see RFC for VDS changes.
@@ -1152,7 +1152,7 @@ H5F_vfd_swmr_reader_end_of_tick(H5F_t *f, hbool_t entering_api)
     herr_t   ret_value = SUCCEED;
     uint32_t i, j, nchanges;
     H5FD_t * file = shared->lf;
-    htri_t ret;
+    htri_t   ret;
 
     FUNC_ENTER_NOAPI(FAIL)
 
@@ -1173,15 +1173,16 @@ H5F_vfd_swmr_reader_end_of_tick(H5F_t *f, hbool_t entering_api)
      */
 
     /* Check if make_believe is set */
-    if(H5FD_vfd_swmr_get_make_believe(file)) {
+    if (H5FD_vfd_swmr_get_make_believe(file)) {
 
         /* Return value is TRUE: metadata file is not found, continue with make_believe
            and skip eot processing */
-        if((ret = H5FD_vfd_swmr_check_make_believe(file)) == TRUE) {
+        if ((ret = H5FD_vfd_swmr_check_make_believe(file)) == TRUE) {
             HDfprintf(stdout, "%s: continue make_believe\n", __func__);
             /* Skip most of the EOT processing */
             goto reader_update_eot;
-        } else if (ret == FAIL)
+        }
+        else if (ret == FAIL)
             HGOTO_ERROR(H5E_ARGS, H5E_CANTGET, FAIL, "error in checking make_believe from driver")
 
         /* Return value is FALSE i.e. found the metadata file */
@@ -1194,8 +1195,8 @@ H5F_vfd_swmr_reader_end_of_tick(H5F_t *f, hbool_t entering_api)
         /* Set make_believe to FALSE;
            get out from make_believe state, continue normal processing */
         H5FD_vfd_swmr_set_make_believe(file, FALSE);
-
-    } else {
+    }
+    else {
         /* make_believe is not set, continue normal processing */
         if (H5FD_vfd_swmr_get_tick_and_idx(file, TRUE, &tmp_tick_num, &vfd_entries, NULL) < 0)
             HGOTO_ERROR(H5E_ARGS, H5E_CANTGET, FAIL, "error in retrieving tick_num from driver")

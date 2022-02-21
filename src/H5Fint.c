@@ -1857,7 +1857,7 @@ H5F_open(const char *name, unsigned flags, hid_t fcpl_id, hid_t fapl_id)
                                                                initialize the callback to generate
                                                                checksums for metadata files */
     hbool_t curr_make_believe = FALSE;                      /* VFD SWMR: Using make believe or not */
-    H5F_t *ret_value = NULL;                                /* Actual return value */
+    H5F_t * ret_value         = NULL;                       /* Actual return value */
 
     FUNC_ENTER_NOAPI(NULL)
 
@@ -1932,7 +1932,7 @@ H5F_open(const char *name, unsigned flags, hid_t fcpl_id, hid_t fapl_id)
                         name, tent_flags)
     } /* end if */
 
-#if 0  /* VC */
+#if 0 /* VC */
     /* Keep Dave's coding here for the time being so we can see what is
      * being changed.  Can remove later for final cleanup. */
 
@@ -1957,11 +1957,11 @@ H5F_open(const char *name, unsigned flags, hid_t fcpl_id, hid_t fapl_id)
          */
 
         /* Retrieve current make_believe before closing it */
-        if (vfd_swmr_config_ptr->version) 
+        if (vfd_swmr_config_ptr->version)
             curr_make_believe = H5FD_vfd_swmr_get_make_believe(lf);
 
         /* VC: restore H5FD_close() which is removed with Dave's VFD SWMR VDS changes */
-        if(H5FD_close(lf) < 0)
+        if (H5FD_close(lf) < 0)
             HGOTO_ERROR(H5E_FILE, H5E_CANTOPENFILE, NULL, "unable to close low-level file info")
         if (flags & H5F_ACC_TRUNC)
             HGOTO_ERROR(H5E_FILE, H5E_CANTOPENFILE, NULL, "unable to truncate a file which is already open")
@@ -1983,10 +1983,10 @@ H5F_open(const char *name, unsigned flags, hid_t fcpl_id, hid_t fapl_id)
         if ((file = H5F__new(shared, flags, fcpl_id, fapl_id, NULL)) == NULL)
             HGOTO_ERROR(H5E_FILE, H5E_CANTOPENFILE, NULL, "unable to create new file object")
 
-        /* The make_believe from H5F__sfile_search() has no metadata file, 
+        /* The make_believe from H5F__sfile_search() has no metadata file,
            but current lf found metadata file*/
         if (vfd_swmr_config_ptr->version) {
-            if(H5FD_vfd_swmr_get_make_believe(file->shared->lf) == TRUE && curr_make_believe == FALSE) {
+            if (H5FD_vfd_swmr_get_make_believe(file->shared->lf) == TRUE && curr_make_believe == FALSE) {
                 HDfprintf(stdout, "%s: Fix inconsistent make believe from sfile_searh() \n", __func__);
                 /* Fix inconsistency: reset file->shared->lf's make believe to false */
                 H5FD_vfd_swmr_set_make_believe(file->shared->lf, curr_make_believe);
@@ -2148,7 +2148,7 @@ H5F_open(const char *name, unsigned flags, hid_t fcpl_id, hid_t fapl_id)
                 shared->generate_md_ck_cb = cb_info.func;
             if (H5F_vfd_swmr_init(file, file_create) < 0)
                 HGOTO_ERROR(H5E_FILE, H5E_CANTSET, NULL, "file open fail with initialization for VFD SWMR")
-        } 
+        }
 
         /* Insert the entry that corresponds to file onto the EOT queue */
         if (H5F_vfd_swmr_insert_entry_eot(file) < 0)
@@ -2157,8 +2157,8 @@ H5F_open(const char *name, unsigned flags, hid_t fcpl_id, hid_t fapl_id)
 
     /* For multiple opens of the same file, verify that the VFD SWMR setting is consistent */
     /* Restored from Dave's previous changes */
-    if(shared->nrefs > 1) {
-        if(HDmemcmp(vfd_swmr_config_ptr, &shared->vfd_swmr_config, sizeof(H5F_vfd_swmr_config_t)))
+    if (shared->nrefs > 1) {
+        if (HDmemcmp(vfd_swmr_config_ptr, &shared->vfd_swmr_config, sizeof(H5F_vfd_swmr_config_t)))
             HGOTO_ERROR(H5E_PLIST, H5E_CANTGET, NULL, "inconsistent VFD SWMR config info")
     }
 

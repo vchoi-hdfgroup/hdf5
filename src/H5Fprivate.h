@@ -652,8 +652,8 @@ uint64_decode(uint8_t **pp)
             /* hbool_t    generate_updater_files         = */ FALSE,                                         \
             /* hbool_t    flush_raw_data          = */ FALSE, /* int32_t    md_pages_reserved       = */ 0,  \
             /* int32_t    pb_expansion_threshold  = */ 0, /* char       md_file_path[]          = */ "",     \
-            /* char       md_file_name[]          = */ "",                                                   \
-            /* char       updater_file_path[]     = */ "", /* char       log_file_path[]         = */ ""     \
+            /* char       md_file_name[]          = */ "", /* char       updater_file_path[]     = */ "",    \
+            /* char       log_file_path[]         = */ ""                                                    \
     }
 
 /*  For VFD SWMR testing only: private property to generate checksum for metadata file via callback */
