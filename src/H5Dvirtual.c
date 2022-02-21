@@ -901,6 +901,10 @@ H5D__virtual_open_source_dset(const H5D_t *vdset, H5O_storage_virtual_ent_t *vir
         /* Get the virtual dataset's file open flags ("intent") */
         intent = H5F_INTENT(vdset->oloc.file);
 
+#if 0  /* VC */
+        /* Keep Dave's coding here for the time being so we can see what is
+           being changed.  Can remove later for final cleanup. */
+
         /* Try opening the file */
         /* XXX Pass the special file-access property list ID,
          * H5P_FILE_ACCESS_ANY_VFD, so that if the file is already open in
@@ -911,6 +915,9 @@ H5D__virtual_open_source_dset(const H5D_t *vdset, H5O_storage_virtual_ent_t *vir
          */
         src_file = H5F_prefix_open_file(vdset->oloc.file, H5F_PREFIX_VDS, vdset->shared->vds_prefix,
                                         source_dset->file_name, intent, H5P_FILE_ACCESS_ANY_VFD);
+#endif
+        src_file = H5F_prefix_open_file(vdset->oloc.file, H5F_PREFIX_VDS, vdset->shared->vds_prefix,
+                                        source_dset->file_name, intent, vdset->shared->layout.storage.u.virt.source_fapl);
 
         /* If we opened the source file here, we should close it when leaving */
         if (src_file)

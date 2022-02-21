@@ -1078,6 +1078,10 @@ for options in "-d 1" "-d 1 -F" "-d 2 -l 16" "-d 2 -F -l 16" "-d 1 -t" "-d 1 -t 
 	if [ ${do_many_small:-no} = no ]; then
 		continue
 	fi
+
+    #Do I need to remove again after aux_process testing?
+    rm vfd_swmr_bigset*.h5
+
 	#
 	# Test many small datasets of two or three dimensions.
 	#
@@ -1165,6 +1169,9 @@ for options in "-d 1" "-d 1 -F" "-d 2 -l 10" "-d 2 -F -l 10" "-d 1 -t -l 10" "-d
 	if [ ${do_few_big:-no} = no ]; then
 		continue
 	fi
+
+    rm vfd_swmr_bigset*.h5
+
 	echo launch vfd_swmr_bigset_writer few big, options $options ......may take some time......
 
         # Launch the auxiliary process for testing NFS if the --enable-aux-process option is enabled for configuration.

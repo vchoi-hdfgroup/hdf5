@@ -367,6 +367,10 @@ H5_DLL H5FD_vfd_swmr_idx_entry_t *vfd_swmr_enlarge_shadow_index(struct H5F_t *);
 H5_DLL void                       H5FD_vfd_swmr_dump_status(H5FD_t *, uint64_t);
 H5_DLL void                       H5FD_vfd_swmr_set_pb_configured(H5FD_t *_file);
 H5_DLL void                       H5FD_vfd_swmr_record_elapsed_ticks(H5FD_t *, uint64_t);
+H5_DLL void                       H5FD_vfd_swmr_get_md_path_name(H5FD_t *_file, char **name);
+H5_DLL hbool_t                    H5FD_vfd_swmr_get_make_believe(H5FD_t *_file);
+H5_DLL void                       H5FD_vfd_swmr_set_make_believe(H5FD_t *_file, hbool_t make_believe);
+H5_DLL htri_t                     H5FD_vfd_swmr_check_make_believe(H5FD_t *_file);
 H5_DLL H5FD_t *H5FD_vfd_swmr_dedup(H5FD_t *_self, H5FD_t *_other, hid_t fapl_id);
 
 /* Function prototypes for MPI based VFDs*/

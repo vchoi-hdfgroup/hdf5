@@ -646,11 +646,13 @@ uint64_decode(uint8_t **pp)
 #define H5F__DEFAULT_VFD_SWMR_CONFIG                                                                         \
     {                                                                                                        \
         /* int32_t    version                 = */ 0, /* int32_t    tick_len                = */ 0,          \
-            /* int32_t    max_lag                 = */ 0, /* hbool_t    vfd_swmr_writer         = */ FALSE,  \
+            /* int32_t    max_lag                 = */ 0, /* hbool_t    presume_posix_semantics = */ FALSE,  \
+            /* hbool_t    vfd_swmr_writer         = */ FALSE,                                                \
             /* hbool_t    maintain_metadata_file         = */ FALSE,                                         \
             /* hbool_t    generate_updater_files         = */ FALSE,                                         \
             /* hbool_t    flush_raw_data          = */ FALSE, /* int32_t    md_pages_reserved       = */ 0,  \
             /* int32_t    pb_expansion_threshold  = */ 0, /* char       md_file_path[]          = */ "",     \
+            /* char       md_file_name[]          = */ "",                                                   \
             /* char       updater_file_path[]     = */ "", /* char       log_file_path[]         = */ ""     \
     }
 
