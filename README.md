@@ -116,7 +116,7 @@ thetagpu service node.
 To do it manually:
 - Login to theta, then to a thetagpu service node
 - You can request an interactive session on a single-gpu via:
-    * qsub -A <project name -q single-gpu -n 1 -t <time> -I
+    * qsub -A <project name> -q single-gpu -n 1 -t <time> -I
 
 - If the node you are on doesn't have outbound network connectivity,
   do the following (see https://www.alcf.anl.gov/support/user-guides/theta-gpu/getting-started/index.html)
@@ -125,29 +125,30 @@ To do it manually:
     * export http_proxy=http://theta-proxy.tmi.alcf.anl.gov:3128
     * export https_proxy=http://theta-proxy.tmi.alcf.anl.gov:3128
 
-- Use the latest spack from the develop branch
+- Use the latest spack from the develop branch:
     * git clone https://github.com/spack/spack
     * source spack/share/spack/setup-env.sh
 
 - Build mochi-margo with the latest from the main branch so that we can get a new enough margo and mercury that
-  have GPU capabilities
+  have GPU capabilities:
     * git clone https://github.com/mochi-hpc/mochi-spack-packages
     * spack repo add mochi-spack-packages
     * spack install mochi-margo@develop
 
-- Use the system (preinstalled) MPI instead of letting spack build it.
+- Use the system (preinstalled) MPI instead of letting spack build it:
     * spack external find mpi
-
-- Build libfabric
+- Build libfabric:
     * with fabrics=verbs,rxm
     * with the system's rdma-core instead of letting spack build its own rdma-core
+        `
         rdma-core:
           buildable: False
           externals:
           - spec: rdma-core@39.1
             prefix: /usr
+        `
 
-- Build mochi-ssg
+- Build mochi-ssg:
     * Pass whatever MPI implementation ThetaGPU has as a dependency to this command.
     * spack install mochi-ssg@develop ^<mpich | openmpi | ...
 
