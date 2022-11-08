@@ -105,7 +105,7 @@ Development code is available at our Github location:
     
    https://github.com/HDFGroup/hdf5.git
 
-s is an example script for executing an automated regression test on the
+This is an example script for executing an automated regression test on the
 Thetagpu system at the ALCF.  The entire process is handled by the
 "./gpu-qsub" script.  The script can be copied to a desired location where
 the test may be run and submitted via "qsub ./gpu-qsub" on a
@@ -141,13 +141,13 @@ To do it manually:
 - Build libfabric:
     * with fabrics=verbs,rxm
     * with the system's rdma-core instead of letting spack build its own rdma-core
-        `
+        ```
         rdma-core:
             buildable: False
             externals:
             - spec: rdma-core@39.1
               prefix: /usr
-        `
+        ```
 
 - Build mochi-ssg:
     * Pass whatever MPI implementation ThetaGPU has as a dependency to this command.
