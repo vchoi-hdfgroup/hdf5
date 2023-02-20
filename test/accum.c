@@ -8,6 +8,7 @@
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
+ * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* Programmer:  Mike McGreevy
