@@ -66,6 +66,7 @@ typedef struct H5FD_mpio_t {
     haddr_t  last_eoa;               /* Last known end-of-address marker             */
     haddr_t  local_eof;              /* Local end-of-file address for each process   */
     bool     mpi_file_sync_required; /* Whether the ROMIO driver requires MPI_File_sync after write */
+FILE              *logfp;               /* Log file pointer */
 } H5FD_mpio_t;
 
 /* Private Prototypes */
@@ -1032,6 +1033,9 @@ H5FD__mpio_close(H5FD_t *_file)
     assert(file);
     assert(H5FD_MPIO == file->pub.driver_id);
 
+if(file->logfp)
+    fclose(file->logfp);
+
     /* MPI_File_close sets argument to MPI_FILE_NULL */
     if (MPI_SUCCESS != (mpi_code = MPI_File_close(&(file->f))))
         HMPI_GOTO_ERROR(FAIL, "MPI_File_close failed", mpi_code)
@@ -1502,6 +1506,21 @@ H5FD__mpio_write(H5FD_t *_file, H5FD_mem_t type, hid_t H5_ATTR_UNUSED dxpl_id, h
 
     /* Portably initialize MPI status variable */
     memset(&mpi_stat, 0, sizeof(MPI_Status));
+
+if(file->mpi_rank == 0) {
+
+    if (file->logfp == NULL) {
+        char filename[20];
+
+        sprintf(filename,"%d.LOG", HDrand());
+        file->logfp = fopen(filename, "w");
+        fprintf(file->logfp, "METADATA WRITES (addr, size):\n");
+        printf("The log file is: %s\n", filename);
+    }
+
+    if(type != H5FD_MEM_DRAW)
+        fprintf(file->logfp, "(%10" PRIuHADDR ", %10lu)\n", addr, (unsigned long)size);
+}
 
     /* some numeric conversions */
     if (H5FD_mpi_haddr_to_MPIOff(addr, &mpi_off) < 0)
@@ -2470,6 +2489,51 @@ H5FD__mpio_write_vector(H5FD_t *_file, hid_t H5_ATTR_UNUSED dxpl_id, uint32_t co
      * While this doesn't mean that we are actually about to do a collective
      * write, it does mean that all ranks are here, so we can use MPI_File_set_view().
      */
+
+if(file->mpi_rank == 0) {
+
+    if (file->logfp == NULL) {
+        /* Set the log file pointer */
+        char filename[20];
+
+        sprintf(filename,"%d.LOG", HDrand());
+        file->logfp = fopen(filename, "w");
+        printf("The log file is: %s\n", filename);
+        fprintf(file->logfp, "METADATA WRITES (addr, size):\n");
+    }
+
+    if (count) {
+        hbool_t fixed_type = FALSE;
+        hbool_t fixed_size = FALSE;
+        H5FD_mem_t type;
+        size_t  size;
+
+        for (i = 0; i < (int)count; i++) {
+            if (!fixed_type) {
+                if (types[i] == H5FD_MEM_NOLIST) {
+                    fixed_type = TRUE;
+                    type = types[i - 1];
+                } else 
+                    type = types[i];
+            }
+
+            if (type != H5FD_MEM_DRAW) {
+
+                if (!fixed_size) {
+                    if (sizes[i] == 0) {
+                        fixed_size = TRUE;
+                        size       = sizes[i - 1];
+                    } else 
+                        size = sizes[i];
+                }
+                fprintf(file->logfp,
+                        "(%10" PRIuHADDR ", %10lu)\n", addrs[i], (unsigned long)size);
+            }
+        } /* end for */
+
+    } /* end count */
+}
+
     if (H5CX_get_io_xfer_mode(&xfer_mode) < 0)
         HGOTO_ERROR(H5E_VFL, H5E_CANTGET, FAIL, "can't get MPI-I/O transfer mode");
 
