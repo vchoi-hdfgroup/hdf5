@@ -8266,8 +8266,8 @@ done:
 herr_t
 H5D__write_struct_chunk_direct(H5D_t *dset, hsize_t *offset, H5D_struct_chunk_info_t *chunk_info, void *buf[])
 {
-    const H5O_layout_t *layout = &(dset->shared->layout); /* Dataset layout */
-    herr_t              ret_value   = SUCCEED; /* Return value */
+    const H5O_layout_t *layout    = &(dset->shared->layout); /* Dataset layout */
+    herr_t              ret_value = SUCCEED;                 /* Return value */
 
     FUNC_ENTER_PACKAGE_TAG(dset->oloc.addr)
 
@@ -8292,10 +8292,11 @@ done:
  *-------------------------------------------------------------------------
  */
 herr_t
-H5D__read_struct_chunk_direct(const H5D_t *dset, hsize_t *offset, H5D_struct_chunk_info_t *chunk_info, void *buf[])
+H5D__read_struct_chunk_direct(const H5D_t *dset, hsize_t *offset, H5D_struct_chunk_info_t *chunk_info,
+                              void *buf[])
 {
-    const H5O_layout_t *layout = &(dset->shared->layout);      /* Dataset layout */
-    herr_t              ret_value = SUCCEED;                   /* Return value */
+    const H5O_layout_t *layout    = &(dset->shared->layout); /* Dataset layout */
+    herr_t              ret_value = SUCCEED;                 /* Return value */
 
     FUNC_ENTER_PACKAGE_TAG(dset->oloc.addr)
 
@@ -8327,10 +8328,11 @@ done:
  *-------------------------------------------------------------------------
  */
 herr_t
-H5D__get_struct_chunk_info(const H5D_t *dset, const H5S_t H5_ATTR_UNUSED *space, hsize_t chunk_idx, hsize_t *offset,
-                    H5D_struct_chunk_info_t *chunk_info, haddr_t *addr, hsize_t *chunk_size)
+H5D__get_struct_chunk_info(const H5D_t *dset, const H5S_t H5_ATTR_UNUSED *space, hsize_t chunk_idx,
+                           hsize_t *offset, H5D_struct_chunk_info_t *chunk_info, haddr_t *addr,
+                           hsize_t *chunk_size)
 {
-    herr_t             ret_value = SUCCEED; /* Return value */
+    herr_t ret_value = SUCCEED; /* Return value */
 
     FUNC_ENTER_PACKAGE_TAG(dset->oloc.addr)
 
@@ -8357,10 +8359,10 @@ done:
  *-------------------------------------------------------------------------
  */
 herr_t
-H5D__get_struct_chunk_info_by_coord(const H5D_t *dset, const hsize_t *offset, H5D_struct_chunk_info_t *chunk_info, 
-                            haddr_t *addr, hsize_t *chunk_size)
+H5D__get_struct_chunk_info_by_coord(const H5D_t *dset, const hsize_t *offset,
+                                    H5D_struct_chunk_info_t *chunk_info, haddr_t *addr, hsize_t *chunk_size)
 {
-    herr_t              ret_value = SUCCEED; /* Return value */
+    herr_t ret_value = SUCCEED; /* Return value */
 
     FUNC_ENTER_PACKAGE_TAG(dset->oloc.addr)
 
@@ -8379,7 +8381,7 @@ done:
 /*-------------------------------------------------------------------------
  * Function:    H5D__struct_chunk_iter
  *
- * Purpose:     Iterate over all the structured chunks in the dataset 
+ * Purpose:     Iterate over all the structured chunks in the dataset
  *              with given callback and the callback's required data.
  *
  * Return:      SUCCEED/FAIL
@@ -8388,7 +8390,7 @@ done:
 herr_t
 H5D__struct_chunk_iter(H5D_t *dset, H5D_struct_chunk_iter_op_t op, void *op_data)
 {
-    herr_t             ret_value = SUCCEED; /* Return value */
+    herr_t ret_value = SUCCEED; /* Return value */
 
     FUNC_ENTER_PACKAGE_TAG(dset->oloc.addr)
 
@@ -8402,4 +8404,3 @@ H5D__struct_chunk_iter(H5D_t *dset, H5D_struct_chunk_iter_op_t op, void *op_data
 done:
     FUNC_LEAVE_NOAPI_TAG(ret_value)
 } /* end H5D__chunk_iter() */
-
