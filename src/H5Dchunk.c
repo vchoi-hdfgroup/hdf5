@@ -8330,7 +8330,7 @@ H5D__get_struct_chunk_info(const H5D_t H5_ATTR_UNUSED *dset, const H5S_t H5_ATTR
                            H5D_struct_chunk_info_t H5_ATTR_UNUSED *chunk_info, haddr_t H5_ATTR_UNUSED *addr, 
                            hsize_t H5_ATTR_UNUSED *chunk_size)
 {
-    herr_t             ret_value = SUCCEED; /* Return value */
+    herr_t ret_value = SUCCEED; /* Return value */
 
     FUNC_ENTER_PACKAGE_NOERR
 
@@ -8360,7 +8360,7 @@ H5D__get_struct_chunk_info_by_coord(const H5D_t H5_ATTR_UNUSED *dset, const hsiz
                                     H5D_struct_chunk_info_t H5_ATTR_UNUSED *chunk_info, haddr_t H5_ATTR_UNUSED *addr, 
                                     hsize_t H5_ATTR_UNUSED *chunk_size)
 {
-    herr_t              ret_value = SUCCEED; /* Return value */
+    herr_t ret_value = SUCCEED; /* Return value */
 
     FUNC_ENTER_PACKAGE_NOERR
 
@@ -8378,7 +8378,7 @@ H5D__get_struct_chunk_info_by_coord(const H5D_t H5_ATTR_UNUSED *dset, const hsiz
 /*-------------------------------------------------------------------------
  * Function:    H5D__struct_chunk_iter
  *
- * Purpose:     Iterate over all the structured chunks in the dataset 
+ * Purpose:     Iterate over all the structured chunks in the dataset
  *              with given callback and the callback's required data.
  *
  * Return:      SUCCEED/FAIL
@@ -8388,7 +8388,7 @@ herr_t
 H5D__struct_chunk_iter(H5D_t H5_ATTR_UNUSED *dset, H5D_struct_chunk_iter_op_t H5_ATTR_UNUSED op, 
                        void H5_ATTR_UNUSED *op_data)
 {
-    herr_t             ret_value = SUCCEED; /* Return value */
+    herr_t ret_value = SUCCEED; /* Return value */
 
     FUNC_ENTER_PACKAGE_NOERR
 
@@ -8401,4 +8401,3 @@ H5D__struct_chunk_iter(H5D_t H5_ATTR_UNUSED *dset, H5D_struct_chunk_iter_op_t H5
 
     FUNC_LEAVE_NOAPI(ret_value)
 } /* end H5D__chunk_iter() */
-
