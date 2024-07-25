@@ -4022,7 +4022,7 @@ H5D_get_dcpl_id(const H5D_obj_create_t *d)
  *-------------------------------------------------------------------------
  */
 hid_t 
-H5D__get_defined(const H5D_t *dset, const H5S_t *fspace)
+H5D__get_defined(const H5D_t H5_ATTR_UNUSED *dset, const H5S_t *fspace)
 {
     H5S_t *space     = NULL;
     hid_t  ret_value = H5I_INVALID_HID;
@@ -4066,11 +4066,11 @@ done:
  *-------------------------------------------------------------------------
  */
 herr_t 
-H5D__erase(const H5D_t *dset, const H5S_t *fspace)
+H5D__erase(const H5D_t H5_ATTR_UNUSED *dset, const H5S_t H5_ATTR_UNUSED *fspace)
 {
     herr_t                   ret_value       = SUCCEED; /* Return value */
 
-    FUNC_ENTER_PACKAGE
+    FUNC_ENTER_PACKAGE_NOERR
 
     /* TBD:
         if (dset->shared->layout.type == H5D_SPARSE_CHUNK)
@@ -4080,7 +4080,5 @@ H5D__erase(const H5D_t *dset, const H5S_t *fspace)
      */
     /* FOR NOW: just return success */
 
-done:
     FUNC_LEAVE_NOAPI(ret_value)
-
 } /* H5D__erase() */
