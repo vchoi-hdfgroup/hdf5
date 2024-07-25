@@ -4021,7 +4021,7 @@ H5D_get_dcpl_id(const H5D_obj_create_t *d)
  *
  *-------------------------------------------------------------------------
  */
-hid_t 
+hid_t
 H5D__get_defined(const H5D_t H5_ATTR_UNUSED *dset, const H5S_t *fspace)
 {
     H5S_t *space     = NULL;
@@ -4065,7 +4065,7 @@ done:
  *
  *-------------------------------------------------------------------------
  */
-herr_t 
+herr_t
 H5D__erase(const H5D_t H5_ATTR_UNUSED *dset, const H5S_t H5_ATTR_UNUSED *fspace)
 {
     herr_t ret_value = SUCCEED; /* Return value */
