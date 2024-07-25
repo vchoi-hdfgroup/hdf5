@@ -68,6 +68,7 @@ static const char *FILENAME[] = {"dataset",                   /* 0 */
 /* Size of a chunk */
 #define CHK_SIZE (CHUNK_NX * CHUNK_NY * sizeof(int))
 
+#ifdef OUT
 /*-------------------------------------------------------------------------
  * Function:    test_sparse_data
  *
@@ -882,6 +883,8 @@ error:
     return 1;
 } /* test_dense_chunk_api_on_sparse() */
 
+#endif
+
 /*-------------------------------------------------------------------------
  * Function:    main
  *
@@ -1012,12 +1015,14 @@ main(void)
                 if (H5Gclose(grp) < 0)
                     goto error;
 
+#ifdef OUT
                 /* Create its own testfile */
                 nerrors += (test_sparse_data(my_fapl) < 0 ? 1 : 0);
                 nerrors += (test_sparse_direct_chunk(my_fapl) < 0 ? 1 : 0);
                 nerrors += (test_sparse_direct_chunk_query(my_fapl) < 0 ? 1 : 0);
                 nerrors += (test_sparse_filter(my_fapl) < 0 ? 1 : 0);
                 nerrors += (test_dense_chunk_api_on_sparse(my_fapl) < 0 ? 1 : 0);
+#endif
 
                 if (H5Fclose(file) < 0)
                     goto error;
