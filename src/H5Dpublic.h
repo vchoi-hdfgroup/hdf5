@@ -1810,7 +1810,7 @@ H5_DLL herr_t H5Dwrite_struct_chunk(hid_t dset_id, hid_t dxpl_id, const hsize_t 
  * \return \herr_t
  *
  * \details H5Dread_struct_chunk() reads a structured chunk as specified by its logical
- *          offset \p offset in a chunked dataset #dset_id and places data into the provided
+ *          offset \p offset in a chunked dataset \p dset_id and places data into the provided
  *          buffers pointed by \p buf. Information about the structured chunk is returned via
  *          the \p chunk_info parameter. \p buf is an array of pointers to the buffers into which
  *          data for each section of the structured chunk will be read into. It is
