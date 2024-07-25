@@ -8291,7 +8291,7 @@ H5D__write_struct_chunk_direct(H5D_t H5_ATTR_UNUSED *dset, hsize_t H5_ATTR_UNUSE
  *-------------------------------------------------------------------------
  */
 herr_t
-H5D__read_struct_chunk_direct(const H5D_t H5_ATTR_UNUSED *dset, hsize_t H5_ATTR_UNUSED *offset, 
+H5D__read_struct_chunk_direct(const H5D_t H5_ATTR_UNUSED *dset, hsize_t H5_ATTR_UNUSED *offset,
                               H5D_struct_chunk_info_t H5_ATTR_UNUSED *chunk_info, void H5_ATTR_UNUSED *buf[])
 {
     herr_t ret_value = SUCCEED; /* Return value */
