@@ -1699,7 +1699,7 @@ H5_DLL herr_t H5Dclose(hid_t dset_id);
  *          #H5S_ALL causes this function to return a selection containing all defined
  *          values in the dataset.
  *
- *          This function is only useful for datasets with layout #H5D_SPARSE_CHUNK.
+ *          This function is only useful for datasets with layout TBD:H5D_SPARSE_CHUNK.
  *          For other layouts this function will simply return a copy of \p file_space_id,
  *          as all elements are defined for non-sparse datasets.
  *
@@ -1732,7 +1732,7 @@ H5_DLL hid_t H5Dget_defined(hid_t dset_id, hid_t file_space_id, hid_t dxpl_id);
  *          will return fill values, and the elements will no longer be included in the
  *          selection returned by H5Dget_defined().
  *
- *          This function is only useful for datasets with layout #H5D_SPARSE_CHUNK.
+ *          This function is only useful for datasets with layout TBD:H5D_SPARSE_CHUNK.
  *          For other layouts this function will return an error.
  *
  * \since 1.x.x
@@ -1837,7 +1837,7 @@ H5_DLL herr_t H5Dwrite_struct_chunk(hid_t dset_id, hid_t dxpl_id, const hsize_t 
  *
  */
 H5_DLL herr_t H5Dread_struct_chunk(hid_t dset_id, hid_t dxpl_id, const hsize_t *offset,
-                                   H5D_struct_chunk_info_t *chunk_ifo, void *buf[]);
+                                   H5D_struct_chunk_info_t *chunk_info, void *buf[]);
 
 /**
  * --------------------------------------------------------------------------
