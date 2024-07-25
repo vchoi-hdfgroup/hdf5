@@ -50,14 +50,14 @@
 #include "H5Zpkg.h"
 
 #ifdef OUT
-static const char *FILENAME[] = {sparse",                   /* 0 */
-                                 "sparse_data",               /* 1 */
+static const char *FILENAME[] = {sparse ",                   /* 0 */
+                                        "sparse_data",        /* 1 */
                                  "sparse_direct_chunk",       /* 2 */
                                  "sparse_query_direct_chunk", /* 3 */
                                  "sparse_filter",             /* 4 */
                                  NULL};
 #endif
-static const char *FILENAME[] = {"sparse",                   /* 0 */
+static const char *FILENAME[] = {"sparse", /* 0 */
                                  NULL};
 #define FILENAME_BUF_SIZE 1024
 
