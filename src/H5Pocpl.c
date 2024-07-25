@@ -94,7 +94,7 @@ static herr_t H5P__ocrt_pipeline_close(const char *name, size_t size, void *valu
 static herr_t H5P__set_filter(H5P_genplist_t *plist, H5Z_filter_t filter, unsigned int flags,
                               size_t cd_nelmts, const unsigned int cd_values[/*cd_nelmts*/]);
 static herr_t H5P__set_filter2(H5P_genplist_t *plist, uint64_t section_number, H5Z_filter_t filter,
-                               unsigned int flags, size_t buf_size, const void *buf);
+                               uint64_t flags, size_t buf_size, const void *buf);
 
 /*********************/
 /* Package Variables */
@@ -604,7 +604,7 @@ done:
  *-------------------------------------------------------------------------
  */
 herr_t
-H5Pmodify_filter2(hid_t plist_id, uint64_t section_number, H5Z_filter_t filter, uint64_t flags,
+H5Pmodify_filter2(hid_t plist_id, uint64_t H5_ATTR_UNUSED section_number, H5Z_filter_t filter, uint64_t flags,
                   size_t buf_size, const void *buf)
 {
     H5P_genplist_t *plist;               /* Property list */
@@ -682,7 +682,7 @@ done:
  *-------------------------------------------------------------------------
  */
 herr_t
-H5Pset_filter2(hid_t plist_id, uint64_t section_number, H5Z_filter_t filter, uint64_t flags, size_t buf_size,
+H5Pset_filter2(hid_t plist_id, uint64_t H5_ATTR_UNUSED section_number, H5Z_filter_t filter, uint64_t flags, size_t buf_size,
                const void *buf)
 {
     H5P_genplist_t *plist;               /* Property list */
@@ -691,7 +691,7 @@ H5Pset_filter2(hid_t plist_id, uint64_t section_number, H5Z_filter_t filter, uin
     FUNC_ENTER_API(FAIL)
 
     /* Check args */
-    if (section_number < 0 || filter > 255)
+    if (filter > 255)
         HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "invalid section number");
     if (filter < 0 || filter > H5Z_FILTER_MAX)
         HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "invalid filter identifier");
@@ -755,14 +755,13 @@ done:
  *-------------------------------------------------------------------------
  */
 static herr_t
-H5P__set_filter2(H5P_genplist_t *plist, uint64_t section_number, H5Z_filter_t filter, unsigned int flags,
-                 size_t buf_size, const void *buf)
+H5P__set_filter2(H5P_genplist_t H5_ATTR_UNUSED *plist, uint64_t H5_ATTR_UNUSED section_number, 
+                 H5Z_filter_t H5_ATTR_UNUSED filter, uint64_t H5_ATTR_UNUSED flags,
+                 size_t H5_ATTR_UNUSED buf_size, const void H5_ATTR_UNUSED *buf)
 {
-    H5O_pline_t pline;               /* Filter pipeline */
-    htri_t      filter_avail;        /* Filter availability */
     herr_t      ret_value = SUCCEED; /* Return value */
 
-    FUNC_ENTER_PACKAGE
+    FUNC_ENTER_PACKAGE_NOERR
 
 #ifdef TBD
     Need to set up new H5O_pline_t message Need to do something similar like H5P__set_filter1() as below :
@@ -787,7 +786,6 @@ H5P__set_filter2(H5P_genplist_t *plist, uint64_t section_number, H5Z_filter_t fi
 
     /* For now: just return SUCCEED */
 
-done:
     FUNC_LEAVE_NOAPI(ret_value)
 } /* end H5P__set_filter2() */
 
@@ -973,10 +971,9 @@ done:
  *-------------------------------------------------------------------------
  */
 int
-H5Pget_nfilters2(hid_t plist_id, uint64_t section_number)
+H5Pget_nfilters2(hid_t plist_id, uint64_t H5_ATTR_UNUSED section_number)
 {
     H5P_genplist_t *plist;     /* Property list */
-    H5O_pline_t     pline;     /* Filter pipeline */
     int             ret_value; /* return value */
 
     FUNC_ENTER_API(FAIL)
@@ -1115,13 +1112,11 @@ done:
  *-------------------------------------------------------------------------
  */
 H5Z_filter_t
-H5Pget_filter3(hid_t plist_id, uint64_t section_number, unsigned idx, uint64_t *flags /*out*/,
-               size_t *buf_size /*in,out*/, void *buf /*out*/, size_t namelen, char name[] /*out*/,
-               unsigned *filter_config /*out*/)
+H5Pget_filter3(hid_t H5_ATTR_UNUSED plist_id, uint64_t H5_ATTR_UNUSED section_number, unsigned H5_ATTR_UNUSED idx, 
+               uint64_t H5_ATTR_UNUSED *flags /*out*/, size_t H5_ATTR_UNUSED *buf_size /*in,out*/, 
+               void H5_ATTR_UNUSED *buf /*out*/, size_t H5_ATTR_UNUSED namelen, char H5_ATTR_UNUSED name[] /*out*/,
+               unsigned H5_ATTR_UNUSED *filter_config /*out*/)
 {
-    H5P_genplist_t          *plist;     /* Property list */
-    H5O_pline_t              pline;     /* Filter pipeline */
-    const H5Z_filter_info_t *filter;    /* Pointer to filter information */
     H5Z_filter_t             ret_value; /* return value */
 
     FUNC_ENTER_API(H5Z_FILTER_ERROR)
@@ -1325,11 +1320,12 @@ done:
  *-------------------------------------------------------------------------
  */
 herr_t
-H5Pget_filter_by_id3(hid_t plist_id, uint64_t section_number, H5Z_filter_t id, uint64_t *flags /*out*/,
-                     size_t *buf_size /*in,out*/, void *buf /*out*/, size_t namelen, char name[] /*out*/,
-                     unsigned *filter_config /*out*/)
+H5Pget_filter_by_id3(hid_t H5_ATTR_UNUSED plist_id, uint64_t H5_ATTR_UNUSED section_number, 
+                     H5Z_filter_t id, uint64_t H5_ATTR_UNUSED *flags /*out*/,
+                     size_t H5_ATTR_UNUSED *buf_size /*in,out*/, void H5_ATTR_UNUSED *buf /*out*/, 
+                     size_t H5_ATTR_UNUSED namelen, char H5_ATTR_UNUSED name[] /*out*/, 
+                     unsigned H5_ATTR_UNUSED *filter_config /*out*/)
 {
-    H5P_genplist_t *plist;               /* Property list */
     herr_t          ret_value = SUCCEED; /* Return value */
 
     FUNC_ENTER_API(FAIL)
@@ -1499,10 +1495,11 @@ done:
  *
  *-------------------------------------------------------------------------
  */
-H5Premove_filter2(hid_t plist_id, uint64_t section_number, H5Z_filter_t filter)
+herr_t
+H5Premove_filter2(hid_t H5_ATTR_UNUSED plist_id, uint64_t H5_ATTR_UNUSED section_number, 
+                  H5Z_filter_t H5_ATTR_UNUSED filter)
 {
     H5P_genplist_t *plist;               /* Property list */
-    H5O_pline_t     pline;               /* Filter pipeline */
     herr_t          ret_value = SUCCEED; /* return value          */
 
     FUNC_ENTER_API(FAIL)
