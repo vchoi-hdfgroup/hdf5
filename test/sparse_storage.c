@@ -50,7 +50,7 @@
 #include "H5Zpkg.h"
 
 #ifdef OUT
-static const char *FILENAME[] = {"sparse",                   /* 0 */
+static const char *FILENAME[] = {"sparse",                    /* 0 */
                                  "sparse_data",               /* 1 */
                                  "sparse_direct_chunk",       /* 2 */
                                  "sparse_query_direct_chunk", /* 3 */
