@@ -89,7 +89,6 @@ test_sparse_data(hid_t fapl)
     hsize_t  dim[1]       = {50}; /* 1-d dataspace */
     hsize_t  chunk_dim[1] = {5};  /* Chunk size */
     int      wbuf[50];            /* Write buffer */
-    hssize_t npoints = 0;
 
     TESTING("APIs for handling sparse data");
 
@@ -137,8 +136,7 @@ test_sparse_data(hid_t fapl)
     if ((sid1 = H5Dget_defined(did, H5S_ALL, H5P_DEFAULT)) < 0)
         FAIL_STACK_ERROR;
 
-    /* TBD: Verify defined elements npoints in sid1 are as expected */
-    npoints = H5Sget_simple_extent_npoints(sid1);
+    /* TBD: Verify defined elements in sid1 are as expected */
 
     /* Erase all defined elements */
     /* TBD: Verify that dataset with H5D_SPARSE_CHUNK layout will succeed; otherwise fail */
