@@ -49,7 +49,8 @@
 #include "H5VMprivate.h"
 #include "H5Zpkg.h"
 
-static const char *FILENAME[] = {"sparse", /* 0 */
+static const char *FILENAME[] = {"sparse",      /* 0 */
+                                 "sparse_data", /* 1 */
                                  NULL};
 #define FILENAME_BUF_SIZE 1024
 
@@ -63,6 +64,128 @@ static const char *FILENAME[] = {"sparse", /* 0 */
 
 /* Size of a chunk */
 #define CHK_SIZE (CHUNK_NX * CHUNK_NY * sizeof(int))
+
+/*-------------------------------------------------------------------------
+ * Function:    test_sparse_data
+ *
+ * Purpose:     Verify APIs for handling sparse data:
+ *              --H5Dget_defined()
+ *              --H5Derase()
+ *
+ * Return:      Success:        0
+ *              Failure:        -1
+ *-------------------------------------------------------------------------
+ */
+static herr_t
+test_sparse_data(hid_t fapl)
+{
+    char     filename[FILENAME_BUF_SIZE]; /* File name */
+    hid_t    fid          = H5I_INVALID_HID;
+    hid_t    sid          = H5I_INVALID_HID;
+    hid_t    sid1         = H5I_INVALID_HID;
+    hid_t    sid2         = H5I_INVALID_HID;
+    hid_t    dcpl         = H5I_INVALID_HID;
+    hid_t    did          = H5I_INVALID_HID;
+    hsize_t  dim[1]       = {50}; /* 1-d dataspace */
+    hsize_t  chunk_dim[1] = {5};  /* Chunk size */
+    int      wbuf[50];            /* Write buffer */
+    hssize_t npoints = 0;
+
+    TESTING("APIs for handling sparse data");
+
+    /* Create a file */
+    h5_fixname(FILENAME[1], fapl, filename, sizeof filename);
+    if ((fid = H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, fapl)) < 0)
+        FAIL_STACK_ERROR;
+
+    /* Create dataspace */
+    if ((sid = H5Screate_simple(1, dim, NULL)) < 0)
+        FAIL_STACK_ERROR;
+
+    /* Create property list for compact dataset creation */
+    if ((dcpl = H5Pcreate(H5P_DATASET_CREATE)) < 0)
+        FAIL_STACK_ERROR;
+
+    /* TBD: need to set to H5D_SPARSE_CHUNK */
+    if (H5Pset_layout(dcpl, H5D_CHUNKED) < 0)
+        FAIL_STACK_ERROR;
+
+    if (H5Pset_chunk(dcpl, 1, chunk_dim) < 0)
+        FAIL_STACK_ERROR;
+
+    if ((did = H5Dcreate2(fid, SPARSE_DSET, H5T_NATIVE_INT, sid, H5P_DEFAULT, dcpl, H5P_DEFAULT)) < 0)
+        FAIL_STACK_ERROR;
+
+    /* Write sparse data to the dataset */
+    memset(wbuf, 0, sizeof(wbuf));
+
+    /* Initialize and write sparse data to the dataset */
+    wbuf[1]  = 1;
+    wbuf[12] = 12;
+    wbuf[13] = 13;
+    wbuf[14] = 14;
+    wbuf[22] = 22;
+    wbuf[23] = 23;
+    wbuf[24] = 24;
+    wbuf[48] = 48;
+    wbuf[49] = 49;
+    if (H5Dwrite(did, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, wbuf) < 0)
+        TEST_ERROR;
+
+    /* Get defined elements */
+    /* TBD: Verify that dataset with H5D_SPARSE_CHUNK layout will succeed; otherwise fail */
+    if ((sid1 = H5Dget_defined(did, H5S_ALL, H5P_DEFAULT)) < 0)
+        FAIL_STACK_ERROR;
+
+    /* TBD: Verify defined elements npoints in sid1 are as expected */
+    npoints = H5Sget_simple_extent_npoints(sid1);
+
+    /* Erase all defined elements */
+    /* TBD: Verify that dataset with H5D_SPARSE_CHUNK layout will succeed; otherwise fail */
+    if (H5Derase(did, sid1, H5P_DEFAULT) < 0)
+        FAIL_STACK_ERROR;
+
+    /* Call H5Dget_defined() again after H5Derase() */
+    if ((sid2 = H5Dget_defined(did, H5S_ALL, H5P_DEFAULT)) < 0)
+        FAIL_STACK_ERROR;
+
+    /* TBD: Verify nothing is defined in sid2 */
+
+    if (H5Sclose(sid1) < 0)
+        FAIL_STACK_ERROR;
+    if (H5Sclose(sid2) < 0)
+        FAIL_STACK_ERROR;
+
+    /* Closing */
+    if (H5Sclose(sid) < 0)
+        FAIL_STACK_ERROR;
+
+    if (H5Pclose(dcpl) < 0)
+        FAIL_STACK_ERROR;
+
+    if (H5Dclose(did) < 0)
+        FAIL_STACK_ERROR;
+
+    if (H5Fclose(fid) < 0)
+        FAIL_STACK_ERROR;
+
+    PASSED();
+    return SUCCEED;
+
+error:
+    H5E_BEGIN_TRY
+    {
+        H5Sclose(sid);
+        H5Sclose(sid1);
+        H5Sclose(sid2);
+        H5Pclose(dcpl);
+        H5Dclose(did);
+        H5Fclose(fid);
+    }
+    H5E_END_TRY
+
+    return FAIL;
+} /* end test_sparse_data() */
 
 /*-------------------------------------------------------------------------
  * Function:    main
@@ -193,6 +316,9 @@ main(void)
                     goto error;
                 if (H5Gclose(grp) < 0)
                     goto error;
+
+                /* Create its own testfile */
+                nerrors += (test_sparse_data(my_fapl) < 0 ? 1 : 0);
 
                 if (H5Fclose(file) < 0)
                     goto error;
