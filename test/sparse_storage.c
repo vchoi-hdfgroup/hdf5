@@ -64,7 +64,6 @@ static const char *FILENAME[] = {"sparse", /* 0 */
 /* Size of a chunk */
 #define CHK_SIZE (CHUNK_NX * CHUNK_NY * sizeof(int))
 
-
 /*-------------------------------------------------------------------------
  * Function:    main
  *
