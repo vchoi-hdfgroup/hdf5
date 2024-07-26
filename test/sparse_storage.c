@@ -79,16 +79,16 @@ static const char *FILENAME[] = {"sparse",      /* 0 */
 static herr_t
 test_sparse_data(hid_t fapl)
 {
-    char     filename[FILENAME_BUF_SIZE]; /* File name */
-    hid_t    fid          = H5I_INVALID_HID;
-    hid_t    sid          = H5I_INVALID_HID;
-    hid_t    sid1         = H5I_INVALID_HID;
-    hid_t    sid2         = H5I_INVALID_HID;
-    hid_t    dcpl         = H5I_INVALID_HID;
-    hid_t    did          = H5I_INVALID_HID;
-    hsize_t  dim[1]       = {50}; /* 1-d dataspace */
-    hsize_t  chunk_dim[1] = {5};  /* Chunk size */
-    int      wbuf[50];            /* Write buffer */
+    char    filename[FILENAME_BUF_SIZE]; /* File name */
+    hid_t   fid          = H5I_INVALID_HID;
+    hid_t   sid          = H5I_INVALID_HID;
+    hid_t   sid1         = H5I_INVALID_HID;
+    hid_t   sid2         = H5I_INVALID_HID;
+    hid_t   dcpl         = H5I_INVALID_HID;
+    hid_t   did          = H5I_INVALID_HID;
+    hsize_t dim[1]       = {50}; /* 1-d dataspace */
+    hsize_t chunk_dim[1] = {5};  /* Chunk size */
+    int     wbuf[50];            /* Write buffer */
 
     TESTING("APIs for handling sparse data");
 
