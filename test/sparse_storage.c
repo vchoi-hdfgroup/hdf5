@@ -53,6 +53,8 @@ static const char *FILENAME[] = {"sparse",                    /* 0 */
                                  "sparse_data",               /* 1 */
                                  "sparse_direct_chunk",       /* 2 */
                                  "sparse_query_direct_chunk", /* 3 */
+                                 "sparse_filter",             /* 4 */
+                                 "sparse_dense_api",          /* 5 */
                                  NULL};
 #define FILENAME_BUF_SIZE 1024
 
@@ -590,6 +592,304 @@ error:
 } /* test_sparse_direct_chunk_query() */
 
 /*-------------------------------------------------------------------------
+ *
+ * Function:    test_sparse_filter()
+ *
+ * Purpose: Verify the following APIs for structured chunk filtering:
+ *              --H5Pset_filter2()
+ *              --H5Pget_nfilters2()
+ *              --H5Pget_filters3()
+ *              --H5Pget_filter_by_id3()
+ *              --H5Premove_filter2()
+ *              --H5pmodify_filter2()
+ *
+ * Return:      # of errors
+ *
+ *-------------------------------------------------------------------------
+ */
+static int
+test_sparse_filter(hid_t fapl)
+{
+    char         filename[FILENAME_BUF_SIZE];          /* File name */
+    hid_t        fid           = H5I_INVALID_HID;      /* File ID */
+    hid_t        sid           = H5I_INVALID_HID;      /* Dataspace ID */
+    hid_t        did           = H5I_INVALID_HID;      /* Dataset ID */
+    hid_t        dcpl          = H5I_INVALID_HID;      /* Creation plist */
+    hsize_t      dims[2]       = {NX, NY};             /* Dataset dimensions */
+    hsize_t      chunk_dims[2] = {CHUNK_NX, CHUNK_NY}; /* Chunk dimensions */
+    int          nfilters;
+    H5Z_filter_t filtn;
+    uint64_t     flags;
+
+    TESTING("APIs for structured chunk filtering");
+
+    /* Create the file */
+    h5_fixname(FILENAME[4], fapl, filename, sizeof filename);
+
+    /* Create a new file. */
+    if ((fid = H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0)
+        TEST_ERROR;
+
+    /* Create dataspace */
+    if ((sid = H5Screate_simple(RANK, dims, NULL)) < 0)
+        TEST_ERROR;
+
+    /* Enable chunking */
+    if ((dcpl = H5Pcreate(H5P_DATASET_CREATE)) < 0)
+        TEST_ERROR;
+
+    /* TBD: need to set to H5D_SPARSE_CHUNK */
+    if (H5Pset_layout(dcpl, H5D_CHUNKED) < 0)
+        FAIL_STACK_ERROR;
+
+    if (H5Pset_chunk(dcpl, RANK, chunk_dims) < 0)
+        TEST_ERROR;
+
+    if (H5Pset_filter2(dcpl, H5Z_FLAG_SPARSE_SELECTION, H5Z_FILTER_DEFLATE, H5Z_FLAG_MANDATORY, 0, NULL) < 0)
+        TEST_ERROR;
+
+    /* Create a new dataset using dcpl creation properties */
+    did = H5Dcreate2(fid, SPARSE_DSET, H5T_NATIVE_INT, sid, H5P_DEFAULT, dcpl, H5P_DEFAULT);
+
+    /* TBD: verify nfilters is correct; for now it is 0 */
+    nfilters = H5Pget_nfilters2(dcpl, H5Z_FLAG_SPARSE_SELECTION);
+    if (nfilters)
+        TEST_ERROR;
+
+    if (did < 0)
+        TEST_ERROR;
+
+    if (H5Dclose(did) < 0)
+        TEST_ERROR;
+
+    if (H5Pclose(dcpl) < 0)
+        TEST_ERROR;
+
+    if ((did = H5Dopen2(fid, SPARSE_DSET, H5P_DEFAULT)) < 0)
+        FAIL_STACK_ERROR;
+
+    if ((dcpl = H5Dget_create_plist(did)) < 0)
+        FAIL_STACK_ERROR;
+
+    /* TBD: verify that filtn is H5Z_FILTER_DEFLATE and flags is H5Z_FLAG_MANDATORY */
+    filtn = H5Pget_filter3(dcpl, H5Z_FLAG_SPARSE_SELECTION, 0, &flags, NULL, NULL, (size_t)0, NULL, NULL);
+    if (filtn != H5Z_FILTER_NONE)
+        TEST_ERROR;
+
+    /* TBD: Modify the filter's flags to optional */
+    if (H5Pmodify_filter2(dcpl, H5Z_FLAG_SPARSE_SELECTION, H5Z_FILTER_DEFLATE, H5Z_FLAG_OPTIONAL, 0, NULL) <
+        0)
+        FAIL_STACK_ERROR;
+
+    /* TBD: verify that flags is H5Z_FLAG_OPTIONAL */
+    if (H5Pget_filter_by_id3(dcpl, H5Z_FLAG_SPARSE_SELECTION, H5Z_FILTER_DEFLATE, &flags, NULL, NULL, 0, NULL,
+                             NULL) < 0)
+        FAIL_STACK_ERROR;
+
+    /* TBD: Remove the filter */
+    if (H5Premove_filter2(dcpl, H5Z_FLAG_SPARSE_SELECTION, H5Z_FILTER_DEFLATE) < 0)
+        FAIL_STACK_ERROR;
+
+    /* TBD: verify that filtn is H5Z_FILTER_NONE */
+    filtn = H5Pget_filter3(dcpl, H5Z_FLAG_SPARSE_SELECTION, 0, NULL, NULL, NULL, (size_t)0, NULL, NULL);
+    if (filtn != H5Z_FILTER_NONE)
+        TEST_ERROR;
+
+    /* Release resource */
+    if (H5Dclose(did) < 0)
+        TEST_ERROR;
+    if (H5Sclose(sid) < 0)
+        TEST_ERROR;
+    if (H5Pclose(dcpl) < 0)
+        TEST_ERROR;
+    if (H5Fclose(fid) < 0)
+        TEST_ERROR;
+
+    /* Remove the test file */
+    HDremove(filename);
+
+    PASSED();
+    return 0;
+
+error:
+    H5E_BEGIN_TRY
+    {
+        H5Dclose(did);
+        H5Sclose(sid);
+        H5Pclose(dcpl);
+        H5Fclose(fid);
+    }
+    H5E_END_TRY
+
+    return 1;
+} /* test_sparse_filter() */
+
+typedef struct chunk_iter_info_t {
+    hsize_t  offset[2];
+    unsigned filter_mask;
+    haddr_t  addr;
+    hsize_t  size;
+} chunk_iter_info_t;
+
+typedef struct chunk_iter_udata_t {
+    chunk_iter_info_t *chunk_info;
+    int                last_index;
+} chunk_iter_udata_t;
+
+static int
+iter_cb(const hsize_t *offset, unsigned filter_mask, haddr_t addr, hsize_t size, void *op_data)
+{
+    chunk_iter_udata_t *cidata = (chunk_iter_udata_t *)op_data;
+    int                 idx    = cidata->last_index + 1;
+
+    cidata->chunk_info[idx].offset[0]   = offset[0];
+    cidata->chunk_info[idx].offset[1]   = offset[1];
+    cidata->chunk_info[idx].filter_mask = filter_mask;
+    cidata->chunk_info[idx].addr        = addr;
+    cidata->chunk_info[idx].size        = size;
+
+    cidata->last_index++;
+
+    return H5_ITER_CONT;
+} /* iter_cb() */
+
+/*-------------------------------------------------------------------------
+ * Function:    test_dense_chunk_api_on_sparse()
+ *
+ * Purpose: Verify the following dense chunk APIs will fail for
+ *          H5D_SPARSE_CHUNK layout:
+ *             --H5Dwrite_chunk()
+ *             --H5Dget_chunk_info()
+ *             --H5Dget_chunk_info_by_coord()
+ *             --H5Dchunk_iter()
+ *          Verify the following dense chunk APIs will succeed for
+ *          H5D_SPARSE_CHUNK layout:
+ *              --H5Dread_chunk()
+ *              --H5Dget_chunk_storage_size()
+ *              --H5Dget_num_chunks()
+ *
+ * Return:      # of errors
+ *
+ *-------------------------------------------------------------------------
+ */
+static int
+test_dense_chunk_api_on_sparse(hid_t fapl)
+{
+    char               filename[FILENAME_BUF_SIZE];          /* File name */
+    hid_t              fid           = H5I_INVALID_HID;      /* File ID */
+    hid_t              sid           = H5I_INVALID_HID;      /* Dataspace ID */
+    hid_t              did           = H5I_INVALID_HID;      /* Dataset ID */
+    hid_t              dcpl          = H5I_INVALID_HID;      /* Creation plist */
+    hsize_t            dims[2]       = {NX, NY};             /* Dataset dimensions */
+    hsize_t            chunk_dims[2] = {CHUNK_NX, CHUNK_NY}; /* Chunk dimensions */
+    chunk_iter_info_t  chunk_infos[2];
+    chunk_iter_udata_t udata;
+    hsize_t            nchunks = 0;
+    hsize_t            chunk_nbytes;
+    hsize_t            offset[2] = {0, 0};
+    int                direct_buf[CHUNK_NX][CHUNK_NY];
+    haddr_t            addr    = 0;
+    uint32_t           filters = 0;
+
+    TESTING("APIs for direct chunk I/O: dense chunk functions on sparse layout");
+
+    /* Create the file */
+    h5_fixname(FILENAME[5], fapl, filename, sizeof filename);
+
+    /* Create a new file. */
+    if ((fid = H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0)
+        TEST_ERROR;
+
+    /* Create dataspace */
+    if ((sid = H5Screate_simple(RANK, dims, NULL)) < 0)
+        TEST_ERROR;
+
+    /* Enable chunking */
+    if ((dcpl = H5Pcreate(H5P_DATASET_CREATE)) < 0)
+        TEST_ERROR;
+
+    /* TBD: need to set to H5D_SPARSE_CHUNK */
+    if (H5Pset_layout(dcpl, H5D_CHUNKED) < 0)
+        FAIL_STACK_ERROR;
+
+    /* The layout is set to H5D_CHUNKED as a side-effect */
+    if (H5Pset_chunk(dcpl, RANK, chunk_dims) < 0)
+        TEST_ERROR;
+
+    /* Create a new dataset using dcpl creation properties */
+    did = H5Dcreate2(fid, SPARSE_DSET, H5T_NATIVE_INT, sid, H5P_DEFAULT, dcpl, H5P_DEFAULT);
+    if (did < 0)
+        TEST_ERROR;
+
+    H5E_BEGIN_TRY
+    {
+        H5Dwrite_chunk(did, H5P_DEFAULT, 0, offset, CHK_SIZE, direct_buf);
+    }
+    H5E_END_TRY
+    /* TBD: set return status and verify that it should fail */
+
+    H5E_BEGIN_TRY
+    {
+        H5Dget_chunk_info(did, H5S_ALL, 0, NULL, NULL, &addr, NULL);
+    }
+    H5E_END_TRY
+    /* TBD: set return status and verify that it should fail */
+
+    H5E_BEGIN_TRY
+    {
+        H5Dget_chunk_info_by_coord(did, offset, NULL, &addr, NULL);
+    }
+    H5E_END_TRY
+    /* TBD: set return status and verify that it should fail */
+
+    H5E_BEGIN_TRY
+    {
+        udata.chunk_info = chunk_infos;
+        udata.last_index = -1;
+        H5Dchunk_iter(did, H5P_DEFAULT, &iter_cb, &udata);
+    }
+    H5E_END_TRY
+    /* TBD: set return status and verify that it should fail */
+
+    H5Dread_chunk(did, H5P_DEFAULT, offset, &filters, direct_buf);
+    /* TBD: should succeed */
+
+    H5Dget_num_chunks(did, sid, &nchunks);
+    /* TBD: should succeed */
+
+    H5Dget_chunk_storage_size(did, offset, &chunk_nbytes);
+    /* TBD: should succeed */
+
+    /* Release resource */
+    if (H5Dclose(did) < 0)
+        TEST_ERROR;
+    if (H5Sclose(sid) < 0)
+        TEST_ERROR;
+    if (H5Pclose(dcpl) < 0)
+        TEST_ERROR;
+    if (H5Fclose(fid) < 0)
+        TEST_ERROR;
+
+    /* Remove the test file */
+    HDremove(filename);
+
+    PASSED();
+    return 0;
+
+error:
+    H5E_BEGIN_TRY
+    {
+        H5Dclose(did);
+        H5Sclose(sid);
+        H5Pclose(dcpl);
+        H5Fclose(fid);
+    }
+    H5E_END_TRY
+
+    return 1;
+} /* test_dense_chunk_api_on_sparse() */
+
+/*-------------------------------------------------------------------------
  * Function:    main
  *
  * Purpose:     Tests for sparse data
@@ -723,6 +1023,8 @@ main(void)
                 nerrors += (test_sparse_data(my_fapl) < 0 ? 1 : 0);
                 nerrors += (test_sparse_direct_chunk(my_fapl) < 0 ? 1 : 0);
                 nerrors += (test_sparse_direct_chunk_query(my_fapl) < 0 ? 1 : 0);
+                nerrors += (test_sparse_filter(my_fapl) < 0 ? 1 : 0);
+                nerrors += (test_dense_chunk_api_on_sparse(my_fapl) < 0 ? 1 : 0);
 
                 if (H5Fclose(file) < 0)
                     goto error;
