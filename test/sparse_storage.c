@@ -49,8 +49,8 @@
 #include "H5VMprivate.h"
 #include "H5Zpkg.h"
 
-static const char *FILENAME[] = {"sparse",      /* 0 */
-                                 "sparse_data", /* 1 */
+static const char *FILENAME[] = {"sparse",                    /* 0 */
+                                 "sparse_data",               /* 1 */
                                  "sparse_direct_chunk",       /* 2 */
                                  "sparse_query_direct_chunk", /* 3 */
                                  NULL};
@@ -347,9 +347,10 @@ error:
  *-------------------------------------------------------------------------
  */
 static herr_t
-verify_get_struct_chunk_info(hid_t did, hid_t sid, hsize_t chk_index, const hsize_t H5_ATTR_UNUSED *exp_offset,
-                             H5D_struct_chunk_info_t H5_ATTR_UNUSED exp_chunk_info[], 
-                             hsize_t H5_ATTR_UNUSED exp_chk_size)
+verify_get_struct_chunk_info(hid_t did, hid_t sid, hsize_t chk_index,
+                             const hsize_t H5_ATTR_UNUSED          *exp_offset,
+                             H5D_struct_chunk_info_t H5_ATTR_UNUSED exp_chunk_info[],
+                             hsize_t H5_ATTR_UNUSED                 exp_chk_size)
 {
     hsize_t                 out_offset[2] = {0, 0}; /* Buffer to get offset coordinates */
     hsize_t                 out_chk_size  = 0;      /* Size of an allocated/written chunk */
@@ -399,9 +400,9 @@ error:
  *-------------------------------------------------------------------------
  */
 static herr_t
-verify_get_struct_chunk_info_by_coord(hid_t did, hsize_t *offset, 
+verify_get_struct_chunk_info_by_coord(hid_t did, hsize_t *offset,
                                       H5D_struct_chunk_info_t H5_ATTR_UNUSED exp_chunk_info[],
-                                      hsize_t H5_ATTR_UNUSED exp_chk_size)
+                                      hsize_t H5_ATTR_UNUSED                 exp_chk_size)
 {
     hsize_t                 out_chk_size = 0; /* Size of an allocated/written chunk */
     haddr_t                 out_addr     = 0; /* Address of an allocated/written chunk */
